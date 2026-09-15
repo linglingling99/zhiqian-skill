@@ -1,6 +1,14 @@
 # TASK —— Current Truth
 
-> 当前任务唯一有效来源。聊天里的新状态必须写回本文件后，才进入下一关键动作。
+> 当前任务唯一有效来源。聊天里的新状态必须写回本文件后，才进入下一关键动作；历史过程留在 LOG，不把 TASK 变成聊天流水账。
+
+## Identity
+
+- PROJECT_ID：
+- TASK_ID：
+- RUN_ID：
+- STATE_OWNER：
+- SCOPE_ENFORCEMENT：`HARD / SOFT`
 
 ## 目标
 
@@ -15,7 +23,7 @@
 - EXPLICIT_EXCEPTIONS：
 - CONTEXT_CONTAMINATED：FALSE
 
-> 默认不读取父目录、兄弟任务、其他项目、共享 memory 或未明确归属的数据。
+> 默认不读取父目录、兄弟任务、其他项目、共享 memory 或未明确归属的数据。`SOFT` 只代表指令边界，不代表宿主真正隔离。
 
 ## 当前范围
 
