@@ -50,7 +50,6 @@ check(all(x in files["delivery"] for x in ["ACTIVE", "SUPERSEDED", "INVALID"]), 
 check("Cleanup Gate" in files["delivery"], "Cleanup Gate")
 check(all(x in files["log"] for x in ["ACTIVE", "SUPERSEDED", "INVALID", "ROOT_CAUSE_CHECK"]), "LOG 支持证据生命周期与根因检查")
 
-# V0.2 benchmark-hardening additions learned from mature agent/skill projects.
 for token in ["PROJECT_ID", "TASK_ID", "RUN_ID"]:
     check(token in files["memory"] and token in files["task"], f"稳定状态身份: {token}")
 
@@ -70,6 +69,15 @@ check("不可信数据" in files["research"] and "指令" in files["research"], 
 check(("2–3" in files["research"] or "2-3" in files["research"]) and "写" in files["research"], "研究小批次 Writeback Gate")
 check("REFERENCE_EXAMPLES" in files["research_tpl"], "产品/视觉任务可选参考样例")
 
+# Proxy A/B exposed a semantic-sync defect after a core platform change.
+check("SCHEMA_GATE" in files["skill"] or "SCHEMA_GATE" in files["memory"], "核心文件 Schema Gate")
+check("对应模板" in files["memory"] or "对应模板" in files["skill"], "核心文件首次创建从对应模板起步")
+check("CHANGE_IMPACT_GATE" in files["skill"] or "CHANGE_IMPACT_GATE" in files["memory"], "重大变更 Change Impact Gate")
+check("STALE_TERM_SCAN" in files["memory"] or "STALE_TERM_SCAN" in files["delivery"], "重大变更后旧语义扫描")
+check("影响文件" in files["task"] or "Affected Artifacts" in files["task"], "TASK 记录变更影响文件")
+check("STALE_TERM_SCAN" in files["log"], "LOG 记录 stale-term 复核")
+check("来源/核验日期" in files["research_tpl"] and "Sources" in files["research_tpl"], "RESEARCH 模板保留来源与核验日期")
+
 # Eval harness: paired baseline/skill prompts and repeatable metadata live in repo.
 evals_path = ROOT / "evals" / "evals.json"
 check(evals_path.exists(), "标准化 evals/evals.json 存在")
@@ -79,6 +87,7 @@ if evals_path.exists():
         evals = data.get("evals", [])
         check(len(evals) >= 4, f"至少 4 个行为 eval（实际 {len(evals)}）")
         check(all("prompt" in e and "expected_output" in e for e in evals), "每个 eval 含 prompt + expected_output")
+        check(any(e.get("name") == "platform-change-reconciliation" for e in evals), "包含平台变更一致性回归 eval")
     except Exception as e:
         check(False, f"evals.json 可解析: {e}")
 
