@@ -14,8 +14,14 @@
       "license_file": "LICENSE",
       "license_sha256": "a37e0e9697144819e1d965176ac4ae5bc3fa02d11e7812036bbcadf6dafe2400",
       "targets": [
-        {"file": "skills/brainstorming/SKILL.md", "sha256": "74edf03ea6d24ef53db48677b93558d14a979bdf052ca3f57ecdca0c66791608"},
-        {"file": "skills/verification-before-completion/SKILL.md", "sha256": "2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3"}
+        {
+          "file": "skills/brainstorming/SKILL.md",
+          "sha256": "74edf03ea6d24ef53db48677b93558d14a979bdf052ca3f57ecdca0c66791608"
+        },
+        {
+          "file": "skills/verification-before-completion/SKILL.md",
+          "sha256": "2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3"
+        }
       ]
     },
     {
@@ -29,10 +35,22 @@
       "license_file": "LICENSE",
       "license_sha256": "4f2e5ecfaa4e0833621cfe54c0bdc2f60f086c0925540d7bdc713517eafb3c84",
       "targets": [
-        {"file": "skills/planning-with-files/SKILL.md", "sha256": "04d1390b030ae4c7c8f4f7affe498617a25cd10f4e90ff9b2ac6cceff3a1b48a"},
-        {"file": "skills/planning-with-files/templates/task_plan.md", "sha256": "3c4b61444270f689c3dab81b7113467fb87e9705175aea9c3a3b970bd4e777a3"},
-        {"file": "skills/planning-with-files/templates/findings.md", "sha256": "bb9237ccbf08148d7f7f23ad58fbc9bd7c879c6d0cbca1d533b5b5f21c26c529"},
-        {"file": "skills/planning-with-files/templates/progress.md", "sha256": "28fc357000ed2b18910c4e436f0f2e02f4abf0acd29cce370a2670640974f31c"}
+        {
+          "file": "skills/planning-with-files/SKILL.md",
+          "sha256": "04d1390b030ae4c7c8f4f7affe498617a25cd10f4e90ff9b2ac6cceff3a1b48a"
+        },
+        {
+          "file": "skills/planning-with-files/templates/task_plan.md",
+          "sha256": "3c4b61444270f689c3dab81b7113467fb87e9705175aea9c3a3b970bd4e777a3"
+        },
+        {
+          "file": "skills/planning-with-files/templates/findings.md",
+          "sha256": "bb9237ccbf08148d7f7f23ad58fbc9bd7c879c6d0cbca1d533b5b5f21c26c529"
+        },
+        {
+          "file": "skills/planning-with-files/templates/progress.md",
+          "sha256": "28fc357000ed2b18910c4e436f0f2e02f4abf0acd29cce370a2670640974f31c"
+        }
       ]
     },
     {
@@ -45,7 +63,12 @@
       "license": "MIT",
       "license_file": "LICENSE",
       "license_sha256": "661142e53c313d2bb5e1b055f5c0a39001450ff1b5e27b89dc4bc7de9a6352ca",
-      "targets": [{"file": "skills/find-skills/SKILL.md", "sha256": "c00eeea0e13e74fe4a9d84ba0a8542205a1b736d65f13134fe1a6647eb14976f"}]
+      "targets": [
+        {
+          "file": "skills/find-skills/SKILL.md",
+          "sha256": "c00eeea0e13e74fe4a9d84ba0a8542205a1b736d65f13134fe1a6647eb14976f"
+        }
+      ]
     },
     {
       "id": "U4",
@@ -58,10 +81,22 @@
       "license_file": "skills/skill-creator/LICENSE.txt",
       "license_sha256": "bc6b3af2f331cbc7fb0da1344efb2cbe5877a31498b4d70dbc7000f3405a1362",
       "targets": [
-        {"file": "skills/skill-creator/SKILL.md", "sha256": "dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf"},
-        {"file": "skills/skill-creator/agents/grader.md", "sha256": "57134da0c1a4eea33fbd74a1c9c44aa814f07d6bc64de303edb586f941e5d21a"},
-        {"file": "skills/skill-creator/agents/comparator.md", "sha256": "fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e"},
-        {"file": "skills/skill-creator/agents/analyzer.md", "sha256": "bf68f4cac5a56c673a928c2e6d619586c5b93ea364026ab37547772cb45a663a"}
+        {
+          "file": "skills/skill-creator/SKILL.md",
+          "sha256": "dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf"
+        },
+        {
+          "file": "skills/skill-creator/agents/grader.md",
+          "sha256": "57134da0c1a4eea33fbd74a1c9c44aa814f07d6bc64de303edb586f941e5d21a"
+        },
+        {
+          "file": "skills/skill-creator/agents/comparator.md",
+          "sha256": "fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e"
+        },
+        {
+          "file": "skills/skill-creator/agents/analyzer.md",
+          "sha256": "bf68f4cac5a56c673a928c2e6d619586c5b93ea364026ab37547772cb45a663a"
+        }
       ]
     }
   ]
