@@ -2,6 +2,39 @@
 
 > 有效性与兼容性结论只按真实证据记录，不把候选规则写成“已经有效”。
 
+## [0.2.0-rc3] —— 2026-09-16
+
+### Proxy A/B 预检修复
+
+在正式重新跑 WorkBuddy 前，用标准 eval `research-challenges-idea` 做了一轮开发者代理 Baseline vs Skill 对照，并追加“微信小程序 → 完全本地手机网页”的核心平台变更。
+
+RC2 暴露出一个真实问题：虽然 D-* 已更新，但 TASK Goal / 后续方案仍可能残留旧平台语义，说明“Write-through”还没有覆盖派生产物的一致性。
+
+### 新增 / 强化
+
+- `SCHEMA_GATE`：INDEX/TASK/RESEARCH/LOG/PROFILE 首次创建必须从对应模板起步；不适用/不可获得字段显式标记，不能静默缩水。
+- `CHANGE_IMPACT_GATE`：平台、用户群体、登录/权限、数据模式、核心范围或交付格式改变时，先列出所有影响文件。
+- `STALE_TERM_SCAN`：旧语义分类 `HISTORICAL_OK / UPDATE_REQUIRED / INVALID`；仍有 UPDATE_REQUIRED 时不能继续关键执行或声称 State Sync 完成。
+- TASK 模板新增 CHANGE_SET、影响文件和 Schema Gate。
+- LOG 模板新增 CHANGE_IMPACT / STALE_TERM_SCAN 账本。
+- Delivery 增加 major-change reconciliation 和核心文件 Schema 检查。
+- 标准 eval 增加 `platform-change-reconciliation`。
+- Proxy A/B 结果记录于 `docs/evaluation/V0.2_RC3_PROXY_AB.md`。
+
+### Proxy 结论
+
+- 最终产品方案本身仅小幅优于强 Baseline；没有出现“产品创意碾压”。
+- Skill 的明显增量主要在研究可追溯、反证、R/D/H、核心变更传播和 Handoff。
+- 代价是文件/文本量明显增加，因此第二轮 WorkBuddy 必须继续核算积分、时间、工具调用和用户负担。
+- 这只是 Proxy，不能替代真实独立 A/B。
+
+### 当前验证
+
+- 基础静态校验：30/30。
+- V0.2 行为契约静态校验：51/51。
+- V0.2 RC3 Proxy A/B：`PASS WITH CAVEATS`。
+- WorkBuddy RC3 真实 A/B / 真 Handoff：PENDING。
+
 ## [0.2.0-rc2] —— 2026-09-16
 
 ### 成熟项目 Benchmark Hardening
