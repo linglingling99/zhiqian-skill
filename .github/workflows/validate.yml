@@ -2,7 +2,7 @@ name: Validate human-ai-collab
 
 on:
   push:
-    branches: [main, v0.2-eval-fixes]
+    branches: [main, v0.2-eval-fixes, v0.2-benchmark-hardening]
   pull_request:
     branches: [main]
 
