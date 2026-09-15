@@ -48,9 +48,32 @@
 - 研究驱动的 D-* 是否与实现一致；
 - 当前产物路径真实存在。
 
+### Major-change reconciliation
+
+如果本 RUN 出现过平台、登录/权限、数据模式、用户群体、核心范围或交付格式变化：
+
+1. 确认 `CHANGE_IMPACT_GATE` 已记录；
+2. 对 Current Truth、ACTIVE 产品规格、Handoff/开发资料和验收说明运行 `STALE_TERM_SCAN`；
+3. 被替代语义只能处于：
+   - `HISTORICAL_OK`：明确历史上下文；
+   - `INVALID`：旧证据/旧产物，不再支持当前结论；
+   - 若仍是 `UPDATE_REQUIRED`，则 State Sync 未完成；
+4. 不允许出现“D-* 已改成 Web，但 Goal/交接仍写小程序”这类部分同步。
+
 漂亮文档不是交付，真实产物也不能替代状态同步。
 
-## 6. Handoff readiness
+## 6. SCHEMA_GATE
+
+交付前检查核心文件是否仍符合对应模板的必要结构：
+
+- `TASK.md`：Identity / Scope / R-D-H / Current Stage / 变更影响；
+- `RESEARCH.md`（如有）：问题定义、证据类型、置信度、Sources、来源/核验日期、Decision Impact；
+- `LOG.md`：Identity、变更同步、错误、Evidence Ledger、恢复点；
+- `INDEX.md`：当前 PROJECT_ID / TASK_ID 与入口一致。
+
+字段不适用写 `NOT_APPLICABLE`，不可获得写 `NOT_AVAILABLE`，不要静默删掉整个字段/章节后仍声称文件完整。
+
+## 7. Handoff readiness
 
 交付前，假设新 AI 只能看 workspace：它应能知道目标、状态、决定理由、风险、证据与下一步。不能靠原聊天补关键背景。
 
