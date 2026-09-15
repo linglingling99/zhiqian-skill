@@ -1,0 +1,25 @@
+name: Validate human-ai-collab
+
+on:
+  push:
+    branches: [main, v0.2-eval-fixes]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Base static validation
+        run: python3 tests/validate_skill.py
+      - name: V0.2 behavior-contract validation
+        run: python3 tests/validate_behavior_contract.py
