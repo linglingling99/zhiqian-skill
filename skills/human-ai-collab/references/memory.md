@@ -86,7 +86,16 @@ SCOPE_ENFORCEMENT: HARD | SOFT
 
 公共 Skill 只放方法/模板；用户数据不得写回 Skill 仓库。
 
-## 5. Write-through State
+## 5. SCHEMA_GATE：核心文件从对应模板起步
+
+第一次创建 `INDEX.md / TASK.md / RESEARCH.md / LOG.md / PROFILE.md` 时，必须从 `assets/templates/` 的**对应模板**起步，而不是临场发明一个缩水版结构。
+
+- 模板字段暂时不适用时写 `NOT_APPLICABLE`；无法获得时写 `NOT_AVAILABLE`。
+- 不允许因为“我知道大概意思”就静默删掉 Identity、Scope、来源/核验日期、Evidence Ledger、变更记录等关键字段。
+- `PROFILE.md` 仍受创建门槛约束：没有稳定且用户已确认的跨任务信息，就**不创建**，而不是创建空壳。
+- 交接前执行 `SCHEMA_GATE`：现有核心文件必须至少保留模板中的关键身份、Current Truth、证据和恢复字段。
+
+## 6. Write-through State
 
 `TASK.md` 是当前任务唯一 Current Truth。重要状态变化不能只留在聊天里。
 
@@ -101,21 +110,43 @@ SCOPE_ENFORCEMENT: HARD | SOFT
 
 `TASK.md` 应持续**综合/重写当前状态**：已经被替代的方案不得继续作为当前要求混在正文中。替代关系保留在 D-*、变更记录和 `LOG.md`，必要时再进 `versions/`。这样新 AI 从头读到尾看到的是“现在到底是什么”，而不是整段聊天历史的复制。
 
+### CHANGE_IMPACT_GATE：核心变更必须做依赖一致性复核
+
+用户改变以下任一核心维度时，不允许只新增一条 D-* 就继续：
+
+- 产品/交付平台（例如小程序 → Web）；
+- 用户群体或核心场景；
+- 注册/登录/权限策略；
+- 数据保存与同步方式；
+- 核心范围、关键功能或验收标准；
+- 对外发布/交付格式。
+
+先生成一个 `CHANGE_SET_ID`，然后：
+
+1. 写清**旧状态 → 新状态**以及改变原因；
+2. 列出**影响文件**：`TASK.md`、`RESEARCH.md` 中当前结论、ACTIVE outputs、handoff/开发资料、验收与测试说明；
+3. 更新 Current Truth 和所有仍标 ACTIVE 的相关产物；历史记录留在 LOG / superseded decision，不把旧状态继续留在当前正文；
+4. 做 `STALE_TERM_SCAN`：主动搜索被替代平台名、旧权限/数据模式、旧范围关键词和与之绑定的派生表述；
+5. 对每个残留判断：`HISTORICAL_OK / UPDATE_REQUIRED / INVALID`；
+6. 只要仍有 `UPDATE_REQUIRED`，不得进入下一关键执行或声称 State Sync 完成。
+
+`RESEARCH.md` 可以保留当时研究对象的历史名称，但如果其“对当前方案的影响”仍是 ACTIVE，就必须同步到当前平台/范围，不得让新 AI 误以为旧方案仍有效。
+
 ### State Sync Gate
 
 - **执行前**：聊天当前状态 == TASK Current Truth。
-- **重大变更后**：先同步再继续。
-- **完成前**：R/D/H、研究结论、产物、验收状态一致。
+- **重大变更后**：完成 `CHANGE_IMPACT_GATE + STALE_TERM_SCAN` 后再继续。
+- **完成前**：R/D/H、研究结论、ACTIVE 产物、验收状态一致。
 
 任何一处不一致，不能声称“已记录/已完成”。
 
-## 6. 文件创建门槛
+## 7. 文件创建门槛
 
 - `PROFILE.md`：只有至少 1 条“用户已确认 + 跨任务仍有价值”的协作信息才创建。只有待确认观察时不建。
 - `RESEARCH.md`：只有真实外部/宿主事实影响方案时创建。
 - `versions/`：只在重大执行前、破坏性变更前、重要交付前按需快照，不机械复制。
 
-## 7. Handoff
+## 8. Handoff
 
 换会话/换 AI 后：
 1. 读 `INDEX.md`，确认 `PROJECT_ID` 与唯一 `TASK_ID`；
