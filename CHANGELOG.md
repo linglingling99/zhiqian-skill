@@ -22,13 +22,13 @@ V0.1 首轮真实 A/B 已完成。Skill 在需求分层、假设/决策结构、
 - Two-Failure Rule。
 - Evidence Lifecycle：`ACTIVE / SUPERSEDED / INVALID`。
 - Cleanup Gate。
-- 新增 V0.2 行为压力场景与静态契约校验。
+- 新增 V0.2 行为压力场景文档与静态契约校验。
 
 ### 当前验证
 
 - V0.1 GitHub → WorkBuddy 下载安装/加载：已实测。
 - V0.1 A/B：已完成，未证明 Skill 整体优于 Baseline。
-- V0.2 静态校验：50/50 通过。
+- V0.2 基础静态校验：30/30 通过；行为契约静态校验：20/20 通过。
 - V0.2 WorkBuddy 真实 A/B / 真 Handoff：待重新部署后测试。
 
 ## [0.1.0] —— 2026-09-15

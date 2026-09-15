@@ -171,7 +171,8 @@ npx skills add linglingling99/zhiqian-skill --skill human-ai-collab
 | WorkBuddy 下载安装 + 加载 V0.1 | ✅ VERIFIED |
 | V0.1 独立 A/B | ✅ COMPLETED（未证明整体优势） |
 | V0.1 Scope / 数据隔离 | ❌ FAILED，V0.2 已针对修复 |
-| V0.2 静态契约校验 | ✅ 50/50 |
+| V0.2 基础静态校验 | ✅ 30/30 |
+| V0.2 行为契约静态校验 | ✅ 20/20 |
 | V0.2 内部代理模拟 | 🧪 PROXY，仅作预检 |
 | V0.2 WorkBuddy 真实 A/B | ⏳ PENDING |
 | 真正换 AI Handoff | ⏳ PENDING |
@@ -197,6 +198,7 @@ zhiqian-skill/
 │   └── licenses/
 └── tests/
     ├── validate_skill.py
+    ├── validate_behavior_contract.py
     └── V0.2_BEHAVIOR_SCENARIOS.md
 ```
 
