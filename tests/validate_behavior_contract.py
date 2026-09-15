@@ -4,6 +4,7 @@
 只验证关键规则和模板是否存在，不代表真实宿主一定遵守；真实行为需 WorkBuddy A/B 与 Handoff 测试。
 """
 from pathlib import Path
+import json
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -16,6 +17,7 @@ files = {
     "research": (SKILL / "references/research.md").read_text(encoding="utf-8"),
     "delivery": (SKILL / "references/delivery.md").read_text(encoding="utf-8"),
     "task": (SKILL / "assets/templates/task.md").read_text(encoding="utf-8"),
+    "index": (SKILL / "assets/templates/index.md").read_text(encoding="utf-8"),
     "research_tpl": (SKILL / "assets/templates/research.md").read_text(encoding="utf-8"),
     "profile": (SKILL / "assets/templates/profile.md").read_text(encoding="utf-8"),
     "log": (SKILL / "assets/templates/log.md").read_text(encoding="utf-8"),
@@ -47,6 +49,38 @@ check("连续失败 2 次" in files["delivery"] or "连续 2 次" in files["deli
 check(all(x in files["delivery"] for x in ["ACTIVE", "SUPERSEDED", "INVALID"]), "Evidence Lifecycle")
 check("Cleanup Gate" in files["delivery"], "Cleanup Gate")
 check(all(x in files["log"] for x in ["ACTIVE", "SUPERSEDED", "INVALID", "ROOT_CAUSE_CHECK"]), "LOG 支持证据生命周期与根因检查")
+
+# V0.2 benchmark-hardening additions learned from mature agent/skill projects.
+for token in ["PROJECT_ID", "TASK_ID", "RUN_ID"]:
+    check(token in files["memory"] and token in files["task"], f"稳定状态身份: {token}")
+
+for token in ["USER_SCOPE", "PROJECT_SCOPE", "TASK_SCOPE", "RUN_SCOPE"]:
+    check(token in files["memory"], f"状态作用域分层: {token}")
+
+check("SCOPE_ENFORCEMENT" in files["memory"] and "HARD" in files["memory"] and "SOFT" in files["memory"] and "SCOPE_ENFORCEMENT" in files["task"], "Hard/Soft Scope 区分")
+check("STATE_OWNER" in files["memory"] and "STATE_OWNER" in files["task"], "Current Truth 单一写入所有者")
+check("多个" in files["memory"] and "TASK_ID" in files["memory"] and ("停止" in files["memory"] or "拒绝" in files["memory"]), "多任务歧义 fail-closed")
+check("不回退" in files["memory"] or "不得回退" in files["memory"] or "不能回退" in files["memory"], "显式 Task 绑定失败不回退到兄弟任务")
+check("当前状态" in files["memory"] and ("重写" in files["memory"] or "综合" in files["memory"]) and "LOG" in files["memory"], "Current Truth 综合当前状态，历史留 LOG")
+
+for token in ["EVIDENCE_AGAINST", "PROBLEM_STATEMENT", "GOALS", "NON_GOALS"]:
+    check(token in files["research"] and token in files["research_tpl"], f"研究反证/问题定义: {token}")
+check("confidence" in files["research_tpl"].lower() and ("cited" in files["research_tpl"].lower() or "assumption" in files["research_tpl"].lower()), "研究证据置信度 + cited/assumption")
+check("不可信数据" in files["research"] and "指令" in files["research"], "外部/导入资料按不可信数据处理")
+check(("2–3" in files["research"] or "2-3" in files["research"]) and "写" in files["research"], "研究小批次 Writeback Gate")
+check("REFERENCE_EXAMPLES" in files["research_tpl"], "产品/视觉任务可选参考样例")
+
+# Eval harness: paired baseline/skill prompts and repeatable metadata live in repo.
+evals_path = ROOT / "evals" / "evals.json"
+check(evals_path.exists(), "标准化 evals/evals.json 存在")
+if evals_path.exists():
+    try:
+        data = json.loads(evals_path.read_text(encoding="utf-8"))
+        evals = data.get("evals", [])
+        check(len(evals) >= 4, f"至少 4 个行为 eval（实际 {len(evals)}）")
+        check(all("prompt" in e and "expected_output" in e for e in evals), "每个 eval 含 prompt + expected_output")
+    except Exception as e:
+        check(False, f"evals.json 可解析: {e}")
 
 for ok, msg in results:
     print(("PASS  " if ok else "FAIL  ") + msg)
