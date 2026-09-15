@@ -20,3 +20,7 @@
 ## 许可全文
 
 各许可全文位于本目录 `licenses/` 下，文件名与上表"保留许可文件"列一一对应。
+
+## V0.3 maintenance note
+
+Original notices above are retained. V0.3 adds independently authored Chinese workflow integration, optional templates and a read-only workspace checker. The project MIT license is bundled as LICENSE.txt. Additional method comparisons are documented at repository-level provenance/V0.3_REFERENCE_MAP.md; they are not added runtime dependencies.

@@ -39,7 +39,7 @@ FORBIDDEN = [
 # 通用绝对路径模式（用于检测混入的本机路径，不暴露任何具体开发者路径）
 ABSOLUTE_PATH_PATTERN = re.compile(
     r"/(Users|home|root|tmp)/[^\s`\"'<>|]*|"
-    r"[A-Za-z]:\\[^\s`\"'<>|]*"
+    r"(?<![A-Za-z0-9_])[A-Za-z]:\\[^\s`\"'<>|]*"
 )
 
 # 敏感内容模式（密钥 / Token / 密码 / 私钥）
@@ -190,7 +190,7 @@ abs_hits, sen_hits, cache_hits, test_hits = [], [], [], []
 for p in sorted(ROOT.rglob("*")):
     if not p.is_file():
         continue
-    rel = str(p.relative_to(ROOT))
+    rel = p.relative_to(ROOT).as_posix()
     # 缓存 / 临时文件
     if any(m in rel for m in CACHE_MARKERS):
         cache_hits.append(rel)
@@ -199,15 +199,21 @@ for p in sorted(ROOT.rglob("*")):
     if re.search(r"02_|03_|独立双会话测试|双会话共同任务|测试与审计", rel):
         test_hits.append(rel)
         continue
+    if ".git" in p.relative_to(ROOT).parts:
+        continue
     if p.suffix in TEXT_SUFFIXES:
         content = p.read_text(encoding="utf-8", errors="replace")
-        if ABSOLUTE_PATH_PATTERN.search(content):
+        path_hits = [m.group(0) for m in ABSOLUTE_PATH_PATTERN.finditer(content)]
+        # This single literal is a synthetic path-rejection fixture, not a user's machine.
+        if rel in {"tests/test_workspace.py", "tests/validate_skill.py"}:
+            path_hits = [h for h in path_hits if h != r"C:\\outside\\file.md"]
+        if path_hits:
             abs_hits.append(rel)
         if SENSITIVE_PATTERN.search(content):
             sen_hits.append(rel)
 
-check(not abs_hits, "全仓库无本机绝对路径" if not abs_hits else "发现本机绝对路径: " + "; ".join(abs_hits))
-check(not sen_hits, "全仓库无密钥/Token/密码" if not sen_hits else "发现敏感内容: " + "; ".join(sen_hits))
+check(not abs_hits, "无未解释的本机绝对路径模式命中" if not abs_hits else "发现本机绝对路径: " + "; ".join(abs_hits))
+check(not sen_hits, "密钥/Token/密码模式扫描未命中（不是完整安全审计）" if not sen_hits else "发现敏感内容: " + "; ".join(sen_hits))
 check(not cache_hits, "全仓库无缓存/临时文件" if not cache_hits else "发现缓存/临时文件: " + "; ".join(cache_hits))
 check(not test_hits, "全仓库无 02/03 测试文件" if not test_hits else "发现测试文件: " + "; ".join(test_hits))
 
@@ -221,9 +227,20 @@ if lock_path.exists():
     try:
         data = json.loads(lock_path.read_text(encoding="utf-8"))
         n = len(data.get("sources", []))
-        check(n == 4, f"sources.lock.json 含 4 个来源 (实际 {n})")
+        check(n >= 4, f"sources.lock.json 保留初代至少 4 个来源 (实际 {n})")
     except Exception as e:  # noqa: BLE001
         check(False, f"sources.lock.json 解析失败: {e}")
+
+# V0.3 portable package shape (static only).
+for required in ["references/scenarios.md", "assets/templates/experience.md", "assets/templates/receipt.json", "scripts/check_workspace.py"]:
+    check((SKILL / required).is_file(), f"V0.3 附属文件存在: {required}")
+check(len(text.splitlines()) < 500, "入口少于 500 行")
+name_match = re.search(r"^name:\s*(.+)$", text, re.M)
+check(bool(name_match and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name_match.group(1))), "Skill 名称格式正确")
+for key, limit in [("description", 1024), ("compatibility", 500)]:
+    match = re.search(rf"^{key}:\s*(.+)$", text, re.M)
+    check(bool(match and 0 < len(match.group(1)) <= limit), f"{key} 长度有效")
+check('version: "0.3.0-rc1"' in text, "V0.3 版本元数据存在")
 
 # 汇总
 print("=" * 60)

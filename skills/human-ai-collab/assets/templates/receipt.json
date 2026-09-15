@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.3",
+  "task_id": "task-slug",
+  "revision": 1,
+  "scope_enforcement": "SOFT",
+  "context_status": "UNKNOWN",
+  "files": [],
+  "checks": [],
+  "changes": []
+}

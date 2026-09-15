@@ -1,108 +1,39 @@
-# TASK —— Current Truth
+# TASK｜当前状态
 
-> 当前任务唯一有效来源。聊天里的新状态必须写回本文件后，才进入下一关键动作；历史过程留在 LOG，不把 TASK 变成聊天流水账。
+TASK_ID: task-slug
+REVISION: 1
 
-## Identity
+## 任务与边界
+PROJECT_ID: project-slug
+RUN_ID: run-slug
+STATE_OWNER: current-agent
+SCOPE_ENFORCEMENT: SOFT
+CONTEXT_CONTAMINATED: FALSE
+- WORK_ROOT：用户指定任务根；实际路径只留本地
+- ALLOWED_READ_ROOTS / ALLOWED_WRITE_ROOTS / EXPLICIT_EXCEPTIONS：实际授权
+- 本次完成形态：方案 / 原型 / 产品 / 部署（选择实际要求）
 
-- PROJECT_ID：
-- TASK_ID：
-- RUN_ID：
-- STATE_OWNER：
-- SCOPE_ENFORCEMENT：`HARD / SOFT`
+## 用户与目标
+- 想达到的结果、相关背景/能力、限制：
+- 用户已明确的偏好 / AI 默认值（区分来源）：
+- 包含 / 不包含：
 
-## 目标
+## 当前需求、决定、假设
+| ID | 当前内容 | 类型/状态 | 来源/依据 | 影响对象 |
+|---|---|---|---|---|
+| R-001 | 实际需求 | 用户明确 / 委托默认 | 用户原话/记录 | D-* / 产物 |
+| D-001 | 当前选择及理由 | ACTIVE | R-* / S-* | 产物 |
+| H-001 | 关键未知（无则省略） | OPEN | 最小核查方法 | 验收 |
 
-- Goal：
-- 给谁用 / 解决什么：
+## 交付链
+| 需求 | 下一动作/负责人 | 产物路径 | 验收办法与证据 | 当前状态 |
+|---|---|---|---|---|
+| R-001 | | | | 未开始/进行中/已验证/受阻/明确延期 |
 
-## Scope & Data Ownership
+## 当前进展与接续
+- 阶段 / 产物 / 尚未验证：
+- 下一步（一个具体动作）：
+- 相关研究或经验入口（没有就省略）：
+- 最后同步与读回证据：
 
-- WORK_ROOT：
-- ALLOWED_READ_ROOTS：
-- ALLOWED_WRITE_ROOTS：
-- EXPLICIT_EXCEPTIONS：
-- CONTEXT_CONTAMINATED：FALSE
-
-> 默认不读取父目录、兄弟任务、其他项目、共享 memory 或未明确归属的数据。`SOFT` 只代表指令边界，不代表宿主真正隔离。
-
-## 当前范围
-
-- 包含：
-- 不包含 / 延后：
-
-## Requirements
-
-| ID | 内容 | 类型（要求/偏好） | 状态 | 来源 |
-|----|------|-------------------|------|------|
-| R-001 | | | 待确认/已确认 | |
-
-## Decisions
-
-| ID | 决定 | 理由 | 来源/证据 | 替代了谁 | 状态 |
-|----|------|------|-----------|----------|------|
-| D-001 | | | | | ACTIVE |
-
-## Assumptions
-
-| ID | 假设 | 为什么重要 | 最小验证 | 状态 |
-|----|------|------------|----------|------|
-| H-001 | | | | OPEN/VERIFIED/REJECTED |
-
-## Research-linked Decisions
-
-| 决定 ID | RESEARCH 依据 | 对方案的影响 |
-|---------|---------------|--------------|
-| | | |
-
-## 执行准备
-
-| 项 | 当前状态 | 缺口 / 下一动作 |
-|----|----------|-----------------|
-| Model | | |
-| Skill | | |
-| Tool | | |
-| Connector / MCP | | |
-| Open Source | | |
-| Data | | |
-| Permission | | |
-
-## 验收标准
-
-- [ ] 
-
-## Current Stage / Next Step
-
-- 当前阶段：
-- 下一步（单一动作）：
-- 最后同步时间：
-
-## CHANGE_IMPACT_GATE（重大变更时填写）
-
-- CHANGE_SET_ID：
-- 旧状态：
-- 新状态：
-- 变更来源 / 原因：
-- 影响文件：
-  - [ ] TASK Current Truth
-  - [ ] RESEARCH 当前影响结论（如有）
-  - [ ] ACTIVE outputs / 产品规格
-  - [ ] Handoff / 开发交接资料
-  - [ ] 验收 / 测试说明
-- `STALE_TERM_SCAN`：`NOT_RUN / PASS / FAIL`
-- 发现的旧语义：
-- 未解决 `UPDATE_REQUIRED`：`0`
-
-> 平台、用户群体、登录/权限、数据模式、核心范围或交付格式改变时，完成本 Gate 后才能继续关键执行。
-
-## SCHEMA_GATE
-
-- [ ] Identity / Scope 字段完整
-- [ ] 当前 R/D/H 与真实状态一致
-- [ ] 重大变更已做 CHANGE_IMPACT_GATE
-- [ ] Current Truth 不混用已失效要求
-
-## 变更记录
-
-| 日期 | R/D/H/范围变更 | 原因 |
-|------|----------------|------|
-| | | |
+> 删去不适用的空行，保留当前真实信息。历史替代原因进入 LOG；重大变更后更新整条受影响交付链。

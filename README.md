@@ -1,330 +1,158 @@
-# Human AI Collab｜人机协作 Skill
+# Human AI Collab｜人机协作经验包
 
-> **让普通用户只需要说清“我想要什么结果”，AI 负责研究同类、补齐缺口、形成生产资料、稳定执行，并把下一位 AI 能直接接手的状态留下来。**
+> **不改变你的主线目标，让 AI 更会理解人、借鉴经验、把事情做成，并让下一个 AI 接得上。**
 
-[![Version](https://img.shields.io/badge/version-0.2.0--rc2-111827)](#当前验证状态)
-[![License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
-[![Language](https://img.shields.io/badge/interaction-中文-f97316)](#快速开始)
-[![Format](https://img.shields.io/badge/format-Agent%20Skills-84cc16)](#安装)
-[![WorkBuddy](https://img.shields.io/badge/WorkBuddy-V0.1%20install%20%2B%20load%20verified-22c55e)](#当前验证状态)
+![Version](https://img.shields.io/badge/version-0.3.0--rc1-blue)
+![Language](https://img.shields.io/badge/交互-中文-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-**Maintainer：合一 / Heyi**
+**公开维护者：合一 / Heyi** · 技术入口：`human-ai-collab`
 
----
+**当前是 V0.3 候选版，不是已证明优于普通 AI 的正式效果承诺。**
 
-## 它解决什么问题？
+[升级说明](docs/UPGRADE_V0.3.md) · [设计](docs/V0.3_DESIGN.md) · [来源对照](docs/research/V0.3_REFERENCE_REVIEW.md) · [本轮报告](docs/evaluation/V0.3_REPORT.md) · [测试方法](evals/README.md)
 
-普通 AI 已经很强，`human-ai-collab` 不应该重复“会写文档、会做网页、会调用工具”这些宿主本来就能做的事。
+## 它要解决什么
 
-它要补的是更难的一层：
+用户往往有想法，却不熟悉怎样把它变成可执行任务；AI 也容易直接开工、把假设当需求、讨论了却没有记录，或者留下下一位 AI 无法接续的成果。
 
-- 用户只有一个不完整的想法，AI 怎么自己补齐“大众基线”；
-- 用户不懂产品/开发时，AI 怎么少问专业问题、更多自己判断；
-- 同类产品、用户反馈、开源方案有哪些值得吸收，哪些坑要避开；
-- 聊天里确认的需求、决定、假设，怎么**真的同步进文件**；
-- 多项目、多任务、多会话时，状态到底属于谁，怎么避免读错数据；
-- 工具失败以后怎么停止撞墙、找根因；
-- 怎么证明“做完了”，而不是“看起来做完了”；
-- 换一个 AI 后，能不能只看 workspace 就继续工作。
-
----
-
-## V0.2 RC2 主流程
+这个包不追求让 AI 多说话、多建文档，而是连接一条主线：
 
 ```mermaid
-flowchart TD
-    A[用户真实任务 / 产品雏形] --> B[绑定 Project / Task / Run + Scope]
-    B --> C[读取唯一 Current Truth]
-    C --> D[最小必要澄清]
-    D --> E[同类产品 / 领域研究]
-    E --> F[大众基线 + 优秀实践 + 反证]
-    F --> G[结合 USER_DELTA 形成方案]
-    G --> H[Write-through 写入 R / D / H]
-    H --> I[识别能力缺口]
-    I --> J[执行 / 最小 Demo]
-    J --> K[证据验证]
-    K --> L[同步当前状态与证据]
-    L --> M[交付 / Handoff]
+flowchart LR
+    U[理解用户与目标] --> G[识别当前缺口]
+    G --> E[资料 / 经验 / 必要研究]
+    E --> D[决定下一步]
+    D --> A[实际行动与验证]
+    A --> S[写回当前状态]
+    S --> G
+    S --> H[交付与接续]
+    H --> L[有条件的成功 / 失败经验]
+    L --> E
 ```
 
-核心不是“流程更多”，而是：
+每一轮只做当前最有价值的下一步。已经清楚的事情直接做；确有未知才问、查或试。研究应改变决定，决定应指向产物，产物应有验收，经验应能解释适用条件。
 
-> **普通 AI 想得到的，它要想到；普通 AI 没想到的，它要通过研究、证据和可交接资产补出来。**
+## V0.3 与前版的区别
 
----
-
-## 首轮 A/B 为什么促成 V0.2？
-
-V0.1 在同一 WorkBuddy 环境做过真实 Baseline vs Skill 对照。结果没有证明“装 Skill 就明显更强”：
-
-- 需求分层、假设/决定结构化、用户问答负担有正向信号；
-- 但最终产品没有显著领先强 Baseline；
-- 工具调用、失败和返工更多；
-- 数据沉淀没有形成预期优势；
-- 还发生过跨组上下文污染，暴露 Scope / 数据归属缺陷。
-
-所以 V0.1 不被定义为“成功版”。**测试成功了，因为它告诉我们 Skill 哪里没有真正产生生产力。**
-
----
-
-## 第二轮测试前，又校对了哪些成熟项目？
-
-在重新消耗 WorkBuddy 测试成本之前，V0.2 RC2 又对照了 Superpowers、Anthropic Skills / Skill Creator、GitHub Spec Kit、Mem0、Planning with Files、Deep Agents、Vercel Skills、Context Engineering Intro、Basic Memory 等成熟项目。
-
-本轮只吸收适合轻量跨宿主 Skill 的架构原则，不搬它们整套 runtime：
-
-| 借鉴点 | human-ai-collab 的落地 |
+| 前版容易发生 | V0.3 的处理 |
 |---|---|
-| Entity / task scope | `PROJECT_ID / TASK_ID / RUN_ID` + USER/PROJECT/TASK/RUN 四层状态 |
-| Fail-closed planning | 多任务歧义停止，不 fallback 到兄弟任务 |
-| Sandbox security | `SCOPE_ENFORCEMENT: HARD / SOFT`，模型自律不冒充安全隔离 |
-| Single state owner | `STATE_OWNER` 唯一改写 TASK/INDEX Current Truth |
-| Evidence-backed research | 问题/目标/非目标 + `EVIDENCE_AGAINST` + CITED/ASSUMPTION + confidence |
-| Current-state memory | TASK 综合“现在是什么”，历史过程进 LOG，不无限 append |
-| Context examples | 产品/视觉任务可选 `REFERENCE_EXAMPLES：借什么 / 不借什么` |
-| Skill TDD / eval | 真实 baseline/with-skill 配对，多轮看时间、成本、方差和实际产品 |
+| 多条规则都有，但衔接依赖 AI 自己猜 | 每个模块写明输入、输出、停止与下一步；统一 READ → ACT → VERIFY → SAVE → NEXT |
+| 竞品研究、建档变成必经手续 | 按任务缺口路由；简单任务直接交付，有来源底稿先复用 |
+| 嘴上说已记录，磁盘未同步 | 工具写入成功后读回；重要文件可用只读回执校验器检测缺失、变更、版本和引用 |
+| 改了一个决定，其他产物还是旧的 | 按受影响链更新，保留历史，重新核对对应验收 |
+| 把“不懂”当成放权 | “我不懂”只改变引导方式；“你决定”也不授权付费、发布或越界 |
+| 只留下流水账或空画像 | 画像按授权和稳定信息创建；经验写触发条件、行动、证据、反例与失效条件 |
+| 模拟分数看起来赢了 | 分开报告静态检查、程序测试、假设对照和真正独立 AI 实测 |
 
-完整校对记录见 [`docs/research/MATURE_AGENT_SKILL_BENCHMARK_2026-09-16.md`](docs/research/MATURE_AGENT_SKILL_BENCHMARK_2026-09-16.md)。
+## 用户怎么使用
 
----
+可以直接对工作 AI 说：
 
-## 1. Scope 不只是一个目录
+> 安装并使用本仓库的 human-ai-collab。先按当前宿主支持的方式安装，不猜目录，不修改其他 Skill。只在我指定的工作目录处理任务；缺权限就明确说明。之后我提出目标，你根据任务需要理解、研究、执行和记录，不要让我手工整理文件。
 
-复杂任务开始时明确：
+仓库地址：<https://github.com/linglingling99/zhiqian-skill>
 
-```text
-PROJECT_ID
-TASK_ID
-RUN_ID
-STATE_OWNER
-
-WORK_ROOT
-ALLOWED_READ_ROOTS
-ALLOWED_WRITE_ROOTS
-EXPLICIT_EXCEPTIONS
-SCOPE_ENFORCEMENT: HARD | SOFT
-```
-
-**数据归属优先于路径包含。** 父目录能访问，不代表兄弟任务、共享 memory、其他项目可以读。
-
-- `HARD`：WorkBuddy / 沙箱 / 宿主真实限制了访问路径；
-- `SOFT`：只有 Skill 在提示 AI 自律。
-
-`SOFT` 不能宣传成真正安全隔离。A/B、多项目、多用户或敏感资料场景应优先配置宿主 HARD 边界。
-
-如果误读非本任务数据：
-
-```text
-CONTEXT_CONTAMINATED = TRUE
-```
-
-立即停止需要独立性的审计/判断；需要独立结论时，用新的干净 RUN / 会话重做被污染阶段。
-
----
-
-## 2. 状态有寿命，不应该全部混成“记忆”
-
-```text
-USER_SCOPE     用户确认、跨任务稳定的信息
-PROJECT_SCOPE  项目入口与长期项目状态
-TASK_SCOPE     当前任务目标、需求、研究、产物
-RUN_SCOPE      本次会话动作、错误、验证证据
-```
-
-临时观察不能自动升级成长期画像：
-
-> RUN → TASK 要相关且经过确认/验证；TASK → USER 必须用户确认，而且跨任务仍有价值。
-
-因此 `PROFILE.md` 仍然是**可选文件**，不是为了目录好看强行创建。
-
----
-
-## 3. Product / Domain Research：先看世界，再发明
-
-做新产品、网站、App、小程序、工具、服务时，如果存在成熟同类，默认先研究，但有饱和停止条件，不无限搜索。
-
-研究至少考虑：
-
-| 产物 | 含义 |
-|---|---|
-| `PROBLEM_STATEMENT` | 真正要解决的问题，不把“做 X”直接当问题 |
-| `GOALS / NON_GOALS` | 这轮要改善什么、明确不做什么 |
-| `TABLE_STAKES` | 这个品类大家默认期待什么 |
-| `BEST_PRACTICES` | 成熟产品哪些做法值得借鉴 |
-| `AVOID_LIST` | 常见差评、坑、复杂度陷阱 |
-| `USER_DELTA` | 用户需求和大众基线的差异 |
-| `EVIDENCE_AGAINST` | 最强反证、替代方案、不值得做的理由 |
-
-每个重要 finding 区分：
-
-```text
-evidence_type: CITED | ASSUMPTION
-confidence: HIGH | MEDIUM | LOW
-```
-
-连续看约 2–3 个有意义来源，或准备离开 research phase 前，影响决策的结论先写 `RESEARCH.md`。不能“嘴上参考了竞品”，文件还是空的。
-
----
-
-## 4. 小白友好的 DELEGATED_MODE
-
-用户说“你决定 / 你看着办 / 我不懂”时，AI 不应该继续把技术题扔回用户。
-
-可逆、低风险、免费、不外发的事项由 AI 自主决定；付费、发布、授权、敏感数据、重要删除等再确认。
-
-问结果：
-
-> 你希望客户点链接查看，还是你生成 PDF 发给客户就够了？
-
-而不是问：
-
-> 你想用纯前端还是 Supabase？
-
----
-
-## 5. Write-through：说记录了，就必须真的写了
-
-`TASK.md` 是 Current Truth：
-
-- 需求 `R-*`
-- 决定 `D-*`
-- 假设 `H-*`
-
-重要状态变化后，**先写文件，再进入下一关键动作**。
-
-TASK 保持“现在到底是什么”；被替代的决定留替代关系和 LOG，不让下一位 AI 在一堆历史方案里猜哪个还有效。
-
----
-
-## 6. 执行纪律
-
-- 同类失败连续 2 次 → 禁止直接第 3 次撞墙，先 `ROOT_CAUSE_CHECK`；
-- 验证证据只有 `ACTIVE / SUPERSEDED / INVALID`；
-- 后台进程、临时文件、旧证据未处理 → 不声称完成；
-- `STATE_OWNER` 是共享 Current Truth 的单一写入者，并行 worker 不抢写 TASK/INDEX。
-
----
-
-## 快速开始
-
-仓库：`https://github.com/linglingling99/zhiqian-skill`
-
-Agent Skills / `npx skills` 生态可尝试：
+支持 Skills CLI 的环境可尝试：
 
 ```bash
 npx skills add linglingling99/zhiqian-skill --skill human-ai-collab
 ```
 
-> GitHub → WorkBuddy 的 V0.1 实际下载安装/加载链已经跑通。重新测试 V0.2 时应删除/更新旧安装，确认实际加载的是当前 GitHub 版本。
+这条命令不是所有宿主通用的已验证安装承诺。也可由执行 AI 将 `skills/human-ai-collab/` **完整目录**放入宿主真实支持的安装位置；不能只复制 SKILL.md，也不需要下载全部上游项目。安装后核对入口版本 `0.3.0-rc1`，必要时启动新会话。
 
-示例：
+用户资料留在自己的项目根；安装包中的方法、模板、脚本与私人档案分开。测试时仅给执行 AI 方法包和任务输入，不提供 `evals/` 的作者答案。
 
-> 我想做一个自由职业者报价工具，我不懂产品和开发，你根据你的判断把这件事推进到能用。
+## 一次协作会留下什么
 
-复杂任务请给 AI 一个**只属于这个任务**的工作目录；如果宿主支持路径权限，直接用 HARD 隔离。
-
----
-
-## 本地生产资料
+小任务可以只有最终答案。真正需要后续接续的任务，最少通常是：
 
 ```text
-资料主目录/
-├── INDEX.md                     # PROJECT_ID / 当前 TASK_ID
-├── PROFILE.md                   # USER_SCOPE，可选
-└── tasks/<task-id>/
-    ├── TASK.md                  # Current Truth：Identity / R / D / H / Scope / 验收
-    ├── LOG.md                   # RUN_SCOPE：动作、错误、证据状态
-    ├── RESEARCH.md              # 影响方案的真实研究
-    ├── materials/
-    ├── outputs/
-    └── versions/                # 重大里程碑按需
+你的任务目录/
+├── TASK.md                 当前目标、决定、未知、验收和下一步
+├── LOG.md                  实际动作、变化、错误和证据
+├── outputs/                本次真实成果（需要才建立）
+├── RESEARCH.md             研究实质影响方案时才建立
+├── PROFILE.md              用户确认并允许保存的长期信息，按需
+├── LESSONS.md              有证据与适用条件的经验，按需
+└── checks/receipt.json      多文件或交接时的可选机械回执
 ```
 
-**公共 Skill 是方法；用户 workspace 才是用户的数据资产。**
+长期项目可继续使用前版 `INDEX.md + tasks/<task-id>/` 布局。已有等价文件优先沿用，不强制复制一套档案；TASK 本身足以交付时，不另写一份重复 PRD。
 
----
+**资料是用户的资产，不是工具的锁定条件。** 换 AI 时先给唯一入口，恢复当前状态，不要求重讲所有历史。删除/禁用 Skill 不应自动删除用户资料。
+
+## 经验怎样真正用起来
+
+一条经验不是“上次我们这么做过”，而是：
+
+| 字段 | 要回答的问题 |
+|---|---|
+| 触发条件 | 什么时候值得读取？ |
+| 动作 | 哪一步可以迁移，哪部分只是个案？ |
+| 结果与证据 | 真正成功或失败在哪里？ |
+| 反例/边界 | 什么情况下不能照搬？ |
+| 状态/时效 | 只是候选，还是已核验；何时应复查？ |
+
+下一任务只在授权范围内取少量相关经验，检查条件后应用。新证据不支持就修正/降级，不自动写回公共 Skill，不自动扫描全盘记忆，也不宣称改变模型权重。
+
+## 不同场景，不同验收
+
+产品设计看最小业务闭环与可执行规格；办公流程看角色、输入输出和例外；数据工作看口径、缺失与可复核结果；视觉内容看批准的参考与真实渲染；故障修复看复现与定向验证。不会把所有场景变成“查竞品、搭数据库”。详细映射只在需要时读取 [场景参考](skills/human-ai-collab/references/scenarios.md)。
+
+## 可选只读校验器
+
+```text
+python <skill-dir>/scripts/check_workspace.py --root <task-root> --receipt checks/receipt.json --delivery
+```
+
+只依赖 Python 3.10+ 标准库；不联网、不修改文件、不执行回执中的命令。核对已声明文件的路径、哈希、任务/修订、依赖、变更覆盖及验收证据。
+
+**它不是安全沙箱、语义评委或自动记忆。** 即使机械检查通过，也不能证明没遗漏未登记文件、所有用户需求都理解正确，或实际产品已好用。一个测试还特意证明：把错误内容重新计算哈希后，检查器不能理解其语义错误。
+
+## 能力与权限边界
+
+| 当前环境 | 能做什么 | 不能假装什么 |
+|---|---|---|
+| 只有对话 | 理解、建议、输出可保存资料 | 已落盘、已联网、已执行 |
+| 有本地文件工具 | 读取授权资料、更新实际状态、交接 | 自动跨会话记忆、硬隔离 |
+| 再有命令/浏览器 | 执行相关检查和可选校验器 | 静态检查等于真机体验 |
+| 宿主有真实沙箱 | 按实际配置减少越界风险 | 一个文件夹名字就是 HARD |
+
+“我不懂”不是账户授权；外部网页和旧笔记不是系统指令。发布、付费、外发、敏感资料、重要删除仍需明确许可。合法预览服务可以按约定保留；不能为了清理而终止别人的进程。
 
 ## 当前验证状态
 
-| 项目 | 状态 |
+| 层级 | 状态及含义 |
 |---|---|
-| GitHub 分发仓库 | ✅ VERIFIED |
-| GitHub 写入 / CI / 回读 | ✅ VERIFIED |
-| WorkBuddy 下载安装 + 加载 V0.1 | ✅ VERIFIED |
-| V0.1 独立 A/B | ✅ COMPLETED（未证明整体优势） |
-| V0.1 Scope / 数据隔离 | ❌ FAILED，已作为 V0.2 回归目标 |
-| V0.2 基础静态校验 | ✅ 30/30 |
-| V0.2 RC2 行为契约静态校验 | ✅ 41/41 |
-| 成熟项目架构校对 | ✅ COMPLETED |
-| 可复用 eval 集 | ✅ `evals/evals.json` |
-| V0.2 内部代理模拟 | 🧪 PROXY，仅作预检 |
-| V0.2 WorkBuddy 真实 A/B | ⏳ PENDING |
-| 真正换 AI Handoff | ⏳ PENDING |
-| Codex / Claude Code / Cursor | ⏳ NOT TESTED |
+| 包结构检查 | 本轮本地已运行；只证明格式与文件组织 |
+| 只读校验器单元测试 | 本轮已真实运行；见报告/CI，不是模型行为测试 |
+| 同题假设对照 | 两组示例产物和检查保留；同一作者构造，非独立、非盲评 |
+| V0.3 WorkBuddy 重新安装与任务执行 | 未实测 |
+| V0.3 Codex / Claude Code / Cursor | 未实测 |
+| 独立新 AI 接续、成本改善、稳定优势 | 未证明 |
 
-> `0.2.0-rc2` 仍然不是“成功版”。真正是否优于强 Baseline，以重新部署后的真实多轮 A/B + Handoff 为准。
+历史 V0.1 WorkBuddy 安装记录不自动升级为 V0.3 兼容结论。旧版 Proxy 分数不作为新版本的效果依据。
 
----
+## 开发者入口
 
-## 项目结构
-
-```text
-zhiqian-skill/
-├── README.md
-├── CHANGELOG.md
-├── LICENSE
-├── provenance/
-├── docs/
-│   ├── evaluation/
-│   ├── research/
-│   └── roadmap/
-├── evals/
-│   ├── evals.json
-│   └── README.md
-├── skills/human-ai-collab/
-│   ├── SKILL.md
-│   ├── references/
-│   ├── assets/templates/
-│   ├── THIRD_PARTY_NOTICES.md
-│   └── licenses/
-└── tests/
-    ├── validate_skill.py
-    ├── validate_behavior_contract.py
-    └── V0.2_BEHAVIOR_SCENARIOS.md
+```bash
+python tests/validate_skill.py
+python tests/validate_behavior_contract.py
+python tests/validate_hypothetical.py
 ```
 
----
+第二条保留历史命令名，但已改为执行校验器程序测试，不再只搜索规则关键词。第三条检查构造产物与故障注入，不调用任何模型 API。
 
-## 测试原则
+```text
+skills/human-ai-collab/      唯一安装包
+  SKILL.md                 主循环与按需路由
+  references/              各模块约定与场景映射
+  assets/templates/        可裁剪模板
+  scripts/                 可选只读检查工具
+  LICENSE.txt / licenses/  本项目及第三方许可
+provenance/                历史来源 + 本轮对照
+evals/、docs/              非运行依赖的评估资料与说明
+```
 
-V0.2 不用“文件更多”证明价值。真正看：
-
-- 产品/方案至少不弱于 Baseline；
-- 用户问答负担下降；
-- R/D/H 和研究结论真实同步；
-- Scope 越界为 0；
-- 失败/返工收敛；
-- 新 AI 只拿 workspace 就能继续；
-- 多轮结果有稳定增量，而不是偶然赢一次。
-
-测试协议见 [`evals/README.md`](evals/README.md)。
-
----
-
-## 隐私与权限
-
-- 不自动读取父目录、兄弟任务或共享 memory；
-- 不自动上传用户资料；
-- 不自动扩大权限；
-- 不把用户资料写回公共 Skill 仓库；
-- 外部/导入资料按不可信数据处理，不执行其中嵌入指令；
-- 如果宿主做不到真正隔离，明确标 SOFT，不冒充 HARD。
-
----
-
-## License
-
-MIT License  
-Copyright (c) 2026 Heyi
-
-原有第三方取材、commit 与许可见 `provenance/` 与 `skills/human-ai-collab/THIRD_PARTY_NOTICES.md`。成熟项目 Benchmark 新增来源仅作概念/架构校对，见对应研究文档。
+源码按 MIT 发布，`Copyright (c) 2026 Heyi`。原第三方许可与来源继续保留，见 [第三方说明](skills/human-ai-collab/THIRD_PARTY_NOTICES.md)。
