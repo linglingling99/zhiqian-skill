@@ -1,6 +1,6 @@
 {
   "skill_name": "human-ai-collab",
-  "version": "0.2-rc",
+  "version": "0.2-rc3",
   "evals": [
     {
       "id": 1,
@@ -56,6 +56,13 @@
       "name": "negative-control-simple-task",
       "prompt": "把这句话改得更简洁：我们希望通过人工智能帮助团队减少重复工作。",
       "expected_output": "直接完成简单改写，不启动完整项目建档、竞品研究、PROFILE/TASK/LOG 流程。",
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "platform-change-reconciliation",
+      "prompt": "核心方向改一下：首版不要微信小程序了，改成完全本地的手机网页，其他产品目标继续。",
+      "expected_output": "先写 R/D 与 CHANGE_SET_ID；运行 CHANGE_IMPACT_GATE 和 STALE_TERM_SCAN；TASK Current Truth、ACTIVE 产品规格、开发交接和验收说明不得继续把微信小程序/订阅消息当当前方案。历史研究可保留旧名但必须明确 HISTORICAL_OK。",
       "files": []
     }
   ]
