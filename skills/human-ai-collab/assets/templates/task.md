@@ -76,6 +76,31 @@
 - 下一步（单一动作）：
 - 最后同步时间：
 
+## CHANGE_IMPACT_GATE（重大变更时填写）
+
+- CHANGE_SET_ID：
+- 旧状态：
+- 新状态：
+- 变更来源 / 原因：
+- 影响文件：
+  - [ ] TASK Current Truth
+  - [ ] RESEARCH 当前影响结论（如有）
+  - [ ] ACTIVE outputs / 产品规格
+  - [ ] Handoff / 开发交接资料
+  - [ ] 验收 / 测试说明
+- `STALE_TERM_SCAN`：`NOT_RUN / PASS / FAIL`
+- 发现的旧语义：
+- 未解决 `UPDATE_REQUIRED`：`0`
+
+> 平台、用户群体、登录/权限、数据模式、核心范围或交付格式改变时，完成本 Gate 后才能继续关键执行。
+
+## SCHEMA_GATE
+
+- [ ] Identity / Scope 字段完整
+- [ ] 当前 R/D/H 与真实状态一致
+- [ ] 重大变更已做 CHANGE_IMPACT_GATE
+- [ ] Current Truth 不混用已失效要求
+
 ## 变更记录
 
 | 日期 | R/D/H/范围变更 | 原因 |
