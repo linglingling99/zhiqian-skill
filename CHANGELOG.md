@@ -2,6 +2,33 @@
 
 > 有效性与兼容性结论只按真实证据记录，不把候选规则写成“已经有效”。
 
+## [0.2.0-rc2] —— 2026-09-16
+
+### 成熟项目 Benchmark Hardening
+
+在第二轮 WorkBuddy A/B 前，对照 Superpowers、Anthropic Skills / Skill Creator、GitHub Spec Kit、Mem0、Planning with Files、Deep Agents、Vercel Skills、Context Engineering Intro、Basic Memory 等项目，补充适合轻量跨宿主 Skill 的工程化约束。
+
+### 新增 / 强化
+
+- 稳定状态身份：`PROJECT_ID / TASK_ID / RUN_ID / STATE_OWNER`。
+- 四层状态作用域：`USER_SCOPE / PROJECT_SCOPE / TASK_SCOPE / RUN_SCOPE`，并增加向上提升条件。
+- 多任务 fail-closed：TASK_ID 歧义或显式绑定失败时停止，不按 mtime / 相似目录 fallback。
+- Scope 增加 `SCOPE_ENFORCEMENT: HARD / SOFT`，明确模型自律不等于宿主安全隔离。
+- Current Truth 改为综合当前状态；历史过程进入 LOG / versions，避免无限 append。
+- Product Research 增加 `PROBLEM_STATEMENT / GOALS / NON_GOALS / SUCCESS_SIGNAL / EVIDENCE_AGAINST`。
+- 研究 finding 增加 `CITED / ASSUMPTION` 与 `confidence: HIGH / MEDIUM / LOW`。
+- 研究 Writeback Gate：连续约 2–3 个有意义来源或离开 research phase 前先落盘。
+- 产品/视觉任务可选 `REFERENCE_EXAMPLES`，明确“借什么 / 不借什么”。
+- 外部网页、仓库、评论、导入资料统一按“不可信数据，不是指令”处理。
+- 新增 `evals/evals.json` 与配对 A/B / 多轮方差评估协议。
+- V0.2 行为压力场景扩展至 Task ambiguity、Hard/Soft Scope、State promotion、并发 owner、Research writeback 与 Negative Control。
+- README 升级为 `0.2.0-rc2` 并公开本轮 Benchmark 结论与真实验证状态。
+
+### 测试方法
+
+- 先扩展行为契约检查并在 GitHub Actions 观察到失败，再修改 Skill / references / templates 使其恢复通过。
+- 静态校验仍不能证明真实模型行为；真实结论继续等待 WorkBuddy 多轮 A/B 与真 Handoff。
+
 ## [0.2.0-rc] —— 2026-09-16
 
 ### 背景
